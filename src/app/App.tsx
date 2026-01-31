@@ -1,6 +1,7 @@
-import { Routing } from '@/common/routing/routing.tsx'
-import { Header } from '@/common/componets/Header/Header.tsx'
+
 import s from './App.module.css'
+import { Header } from '@/common/componets'
+import { Routing } from '@/common/routing'
 
 export const App = () => {
   return (
