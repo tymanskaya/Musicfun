@@ -9,6 +9,7 @@ import type {
 // `createApi` - функция из `RTK Query`, позволяющая создать объект `API`
 // для взаимодействия с внешними `API` и управления состоянием приложения
 export const playlistsApi = createApi({
+
   // `reducerPath` - имя куда будут сохранены состояние и экшены для этого `API`
   reducerPath: 'playlistsApi',
   // `baseQuery` - конфигурация для `HTTP-клиента`, который будет использоваться для отправки запросов
@@ -26,18 +27,28 @@ export const playlistsApi = createApi({
   // с помощью функций, которые будут вызываться при вызове соответствующих методов `API`
   // (например `get`, `post`, `put`, `patch`, `delete`)
   endpoints: build => ({
+
     // Типизация аргументов (<возвращаемый тип, тип query аргументов (`QueryArg`)>)
     // `query` по умолчанию создает запрос `get` и указание метода необязательно
     fetchPlaylists: build.query<PlaylistsResponse, void>({
+
       query: () => `playlists`
     }),
     createPlaylist: build.mutation<{ data: PlaylistData }, CreatePlaylistArgs>({
-      query: body => ({
-        url: 'playlists',
-        method: 'post',
-        body,
+      query: (args) => ({
+        url: "playlists",
+        method: 'POST',
+        body: {
+          data: {
+            type: "playlists", // Поле type должно быть здесь
+            attributes: {
+              title: args.title,
+              description: args.description,
+            },
+          },
+        },
       }),
-    }),
+    })
   }),
 })
 

@@ -4,13 +4,15 @@ import { useCreatePlaylistMutation } from '@/features/playlists/api/playlistsApi
 
 export const CreatePlaylistForm = () => {
   const { register, handleSubmit, reset } = useForm<CreatePlaylistArgs>()
-  const[createPlaylist]=useCreatePlaylistMutation()
+
+  const [createPlaylist] = useCreatePlaylistMutation()
 
   const onSubmit: SubmitHandler<CreatePlaylistArgs> = data => {
-    createPlaylist(data)
-    reset()
+    createPlaylist(data).unwrap().then(() => {
+      reset()
+    })
   }
-
+//unwrap попаду в then только в успешном кейсе
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <h2>Create new playlist</h2>
