@@ -8,7 +8,8 @@ export const CreatePlaylistForm = () => {
   const [createPlaylist] = useCreatePlaylistMutation()
 
   const onSubmit: SubmitHandler<CreatePlaylistArgs> = data => {
-    createPlaylist(data).unwrap().then(() => {
+    createPlaylist(data)
+      .unwrap().then(() => {
       reset()
     })
   }
