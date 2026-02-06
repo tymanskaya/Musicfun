@@ -1,17 +1,12 @@
-import {
-  useDeletePlaylistMutation,
-  useFetchPlaylistsQuery,
 
-} from '@/features/playlists/api/playlistsApi.ts'
 import s from './PlaylistsPage.module.css'
-import { CreatePlaylistForm } from '@/features/playlists/ui/PlaylistsPage/CreatePlaylistForm'
-import { useState } from 'react'
-import type { PlaylistData, UpdatePlaylistArgs } from '@/features/playlists/api/playlistsApi.types.ts'
-import { useForm } from 'react-hook-form'
 import { PlaylistItem } from '@/features/playlists/ui/PlaylistsPage/PlaylistItem'
 import { EditPlaylistForm } from '@/features/playlists/ui/PlaylistsPage/EditPlaylistForm'
-
-
+import { CreatePlaylistForm } from '@/features/playlists/ui/PlaylistsPage/CreatePlaylistForm'
+import type { PlaylistData, UpdatePlaylistArgs } from '@/features/playlists/api/playlistsApi.types.ts'
+import { useDeletePlaylistMutation, useFetchPlaylistsQuery } from '@/features/playlists/api/playlistsApi.ts'
+import { useForm } from 'react-hook-form'
+import { useState } from 'react'
 export const PlaylistsPage = () => {
   const [playlistId, setPlaylistId] = useState<string | null>(null)
 

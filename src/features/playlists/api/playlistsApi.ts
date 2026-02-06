@@ -12,6 +12,7 @@ export const playlistsApi = createApi({
 
   // `reducerPath` - имя куда будут сохранены состояние и экшены для этого `API`
   reducerPath: 'playlistsApi',
+  tagTypes: ['Playlist'],
   // `baseQuery` - конфигурация для `HTTP-клиента`, который будет использоваться для отправки запросов
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BASE_URL,
@@ -27,41 +28,45 @@ export const playlistsApi = createApi({
   // с помощью функций, которые будут вызываться при вызове соответствующих методов `API`
   // (например `get`, `post`, `put`, `patch`, `delete`)
   endpoints: build => ({
-
-    // Типизация аргументов (<возвращаемый тип, тип query аргументов (`QueryArg`)>)
-    // `query` по умолчанию создает запрос `get` и указание метода необязательно
     fetchPlaylists: build.query<PlaylistsResponse, void>({
-
-      query: () => `playlists`
+      query: () => ({ url: `playlists` }),
+      providesTags: ['Playlist'],
     }),
     createPlaylist: build.mutation<{ data: PlaylistData }, CreatePlaylistArgs>({
+      // Оборачиваем плоский объект из формы в структуру JSON:API
       query: (args) => ({
-        url: "playlists",
+        url: 'playlists',
         method: 'POST',
         body: {
           data: {
-            type: "playlists", // Поле type должно быть здесь
-            attributes: {
-              title: args.title,
-              description: args.description,
-            },
-          },
-        },
+            type: 'playlists',
+            attributes: { ...args }
+          }
+        }
       }),
+      invalidatesTags: ['Playlist'],
     }),
-    deletePlaylist: build.mutation<void, string>({
-      query: (playlistId) => ({
-        url: `playlists/${playlistId}`,
-        method: 'DELETE',
-      }),
-    }),
+
     updatePlaylist: build.mutation<void, { playlistId: string; body: UpdatePlaylistArgs }>({
+      // Здесь тоже нужна обертка + поле ID внутри data
       query: ({ playlistId, body }) => ({
         url: `playlists/${playlistId}`,
         method: 'PUT',
-        body,
+        body: {
+          data: {
+            id: playlistId,
+            type: 'playlists',
+            attributes: { ...body }
+          }
+        }
       }),
+      invalidatesTags: ['Playlist'],
     }),
+    deletePlaylist: build.mutation<void, string>({
+      query: playlistId => ({ url: `playlists/${playlistId}`, method: 'delete' }),
+      invalidatesTags: ['Playlist'],
+    }),
+
   }),
 })
 

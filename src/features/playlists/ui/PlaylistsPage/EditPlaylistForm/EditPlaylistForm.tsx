@@ -1,6 +1,6 @@
-import { useUpdatePlaylistMutation } from '@/features/playlists/api/playlistsApi.ts'
 import type { SubmitHandler, UseFormHandleSubmit, UseFormRegister } from 'react-hook-form'
 import type { UpdatePlaylistArgs } from '@/features/playlists/api/playlistsApi.types.ts'
+import { useUpdatePlaylistMutation } from '@/features/playlists/api/playlistsApi.ts'
 
 type Props = {
   playlistId: string
@@ -19,23 +19,12 @@ export const EditPlaylistForm = ({
                                  }: Props) => {
   const [updatePlaylist] = useUpdatePlaylistMutation()
 
-  const onSubmit: SubmitHandler<UpdatePlaylistArgs> = (formData) => {
-    if (!playlistId) return;
-
-    const wrappedBody = {
-      data: {
-        type: 'playlists', // Добавляем этот обязательный тип
-        attributes: {
-          ...formData // ваши title, и т.д.
-        }
-      }
-    };
-
-    updatePlaylist({ playlistId, body: wrappedBody as any }).then(() => {
-      setPlaylistId(null);
-    });
-  };
-
+  const onSubmit: SubmitHandler<UpdatePlaylistArgs> = data => {
+    if (!playlistId) return
+    updatePlaylist({ playlistId, body: data }).then(() => {
+      setPlaylistId(null)
+    })
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
