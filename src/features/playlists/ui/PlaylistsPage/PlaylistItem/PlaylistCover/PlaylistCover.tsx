@@ -6,6 +6,7 @@ import {
   useUploadPlaylistCoverMutation,
 } from '@/features/playlists/api/playlistsApi.ts'
 import type { ChangeEvent } from 'react'
+import { toast } from 'react-toastify'
 
 type Props = {
   playlistId: string
@@ -41,12 +42,13 @@ export const PlaylistCover = ({ images, playlistId }: Props) => {
     // (например, отправить её на сервер), и приложение «упадёт» с ошибкой Cannot read property....
 
     if (!allowedTypes.includes(file.type)) {
-      alert('Only JPEG, PNG or GIF images are allowed')
+      toast('Only JPEG, PNG or GIF images are allowed')
       //здесь мы проверяем или выбранное фото подходит типу разрешенному, если нет выскакивает окошко
+      //toast-это наша всплывашка вместо алерта
     }
 
     if (file.size > maxSize) {
-      alert(`The file is too large. Max size is ${Math.round(maxSize / 1024)} KB`)
+      toast(`The file is too large. Max size is ${Math.round(maxSize / 1024)} KB`)
       //проверяем на максимально допустимый размер
     }
 
