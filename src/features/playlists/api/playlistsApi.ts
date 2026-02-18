@@ -5,6 +5,7 @@ import type {
   PlaylistsResponse, UpdatePlaylistArgs,
 } from '@/features/playlists/api/playlistsApi.types.ts'
 import { baseApi } from '@/app/api/baseApi.tsx'
+import type { Images } from '@/common/types'
 
 // `createApi` - функция из `RTK Query`, позволяющая создать объект `API`
 // для взаимодействия с внешними `API` и управления состоянием приложения
@@ -51,10 +52,33 @@ export const playlistsApi = baseApi.injectEndpoints({
       query: playlistId => ({ url: `playlists/${playlistId}`, method: 'delete' }),
       invalidatesTags: ['Playlist'],
     }),
-
+    uploadPlaylistCover: build.mutation<Images, { playlistId: string; file: File }>({
+      query: ({ playlistId, file }) => {
+        const formData = new FormData()
+        //new FormData чтобы передавать какие-то файлы(в нашем случае картинку) на сервер
+        formData.append('file', file)
+        //formData.append длбавляет одно значение
+        //'file' - это ждет бекенд (смотрим в документации
+        return {
+          url: `playlists/${playlistId}/images/main`,
+          method: 'post',
+          body: formData,
+        }
+      },
+      invalidatesTags: ['Playlist'],
+    }),
+    deletePlaylistCover: build.mutation<void, { playlistId: string }>({
+      query: ({ playlistId }) => ({ url: `playlists/${playlistId}/images/main`, method: 'delete' }),
+      invalidatesTags: ['Playlist'],
+    }),
   }),
 })
 
 // `createApi` создает объект `API`, который содержит все эндпоинты в виде хуков,
 // определенные в свойстве `endpoints`
-export const { useFetchPlaylistsQuery, useCreatePlaylistMutation, useDeletePlaylistMutation, useUpdatePlaylistMutation } = playlistsApi
+export const { useFetchPlaylistsQuery,
+  useCreatePlaylistMutation,
+  useDeletePlaylistMutation,
+  useUpdatePlaylistMutation,
+  useUploadPlaylistCoverMutation,
+useDeletePlaylistCoverMutation} = playlistsApi
