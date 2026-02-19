@@ -7,12 +7,18 @@ import type { PlaylistData, UpdatePlaylistArgs } from '@/features/playlists/api/
 import { useDeletePlaylistMutation, useFetchPlaylistsQuery } from '@/features/playlists/api/playlistsApi.ts'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
+import { useDebounceValue } from '@/common/hooks'
+
 export const PlaylistsPage = () => {
   const [playlistId, setPlaylistId] = useState<string | null>(null)
-
+  const [search, setSearch] = useState('')
+//Throttle: гарантирует выполнение функции с определенной периодичностью (например, раз в 200мс),
+// пока событие идет непрерывно.
+// Debounce: ждет, пока поток событий прекратится, и только потом срабатывает один раз.
   const { register, handleSubmit, reset } = useForm<UpdatePlaylistArgs>()
 
-  const { data } = useFetchPlaylistsQuery()
+  const debounceSearch = useDebounceValue(search)
+  const { data, isLoading } = useFetchPlaylistsQuery({ search: debounceSearch })
 
   const [deletePlaylist] = useDeletePlaylistMutation()
 
@@ -39,7 +45,15 @@ export const PlaylistsPage = () => {
     <div className={s.container}>
       <h1>Playlists page</h1>
       <CreatePlaylistForm />
+      <input
+        type="search"
+        placeholder={'Search playlist by title'}
+        onChange={e => setSearch(e.currentTarget.value)}
+      />
+      {/*поле  для ввода поиска треков*/}
       <div className={s.items}>
+        {!data?.data.length && !isLoading && <h2>Playlists not found</h2>}
+        {/*если треки не найдутся*/}
         {data?.data.map(playlist => {
           const isEditing = playlistId === playlist.id
 
@@ -67,3 +81,4 @@ export const PlaylistsPage = () => {
     </div>
   )
 }
+

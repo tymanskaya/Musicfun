@@ -1,6 +1,6 @@
 
 import type {
-  CreatePlaylistArgs,
+  CreatePlaylistArgs, FetchPlaylistsArgs,
   PlaylistData,
   PlaylistsResponse, UpdatePlaylistArgs,
 } from '@/features/playlists/api/playlistsApi.types.ts'
@@ -14,8 +14,18 @@ export const playlistsApi = baseApi.injectEndpoints({
   // с помощью функций, которые будут вызываться при вызове соответствующих методов `API`
   // (например `get`, `post`, `put`, `patch`, `delete`)
   endpoints: build => ({
-    fetchPlaylists: build.query<PlaylistsResponse, void>({
-      query: () => ({ url: `playlists` }),
+    fetchPlaylists: build.query<PlaylistsResponse, FetchPlaylistsArgs>({
+      //FetchPlaylistsArgs - аргументы которые можно передавать при запросе
+      //если один только параметр то вместо FetchPlaylistsArgs пишем {search: string}
+      //а в url: `playlists?search=${search}`,
+      query: (params) => {
+        //params - входящие параметры
+        return {
+          url: `playlists`,
+          params
+          //передаем на сервер, чтобы оттуда вернулись треки, которые удовлетворяют введенным параметрам
+        } },
+
       providesTags: ['Playlist'],
     }),
     createPlaylist: build.mutation<{ data: PlaylistData }, CreatePlaylistArgs>({
