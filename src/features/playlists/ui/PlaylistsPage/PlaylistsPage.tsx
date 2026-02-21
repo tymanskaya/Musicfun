@@ -21,8 +21,11 @@ export const PlaylistsPage = () => {
     search: debounceSearch,
     pageNumber: currentPage,
     pageSize,
-  })
-
+  }, {refetchOnFocus: true, refetchOnReconnect: true, pollingInterval: 3000,
+    skipPollingIfUnfocused: true,})
+//refetchOnFocus: true автомотическое обновление данных именно для этого эдпоинта
+  //pollingInterval - автоматически через 3000 уйдет запрос за обновлением данных
+  //skipPollingIfUnfocused-не делать запросы, когда перехожу в другую вкладку
   const changePageSizeHandler = (size: number) => {
     setPageSize(size)
     setCurrentPage(1)
