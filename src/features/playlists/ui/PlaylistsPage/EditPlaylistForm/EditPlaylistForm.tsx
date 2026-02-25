@@ -8,6 +8,7 @@ type Props = {
   handleSubmit: UseFormHandleSubmit<UpdatePlaylistArgs>
   editPlaylist: (playlist: null) => void
   setPlaylistId: (playlistId: null) => void
+
 }
 
 export const EditPlaylistForm = ({
