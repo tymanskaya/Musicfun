@@ -10,6 +10,7 @@ import { useDebounceValue } from '@/common/hooks'
 import { Pagination } from '@/common/componets'
 import { PlaylistsList } from '@/features/playlists/ui/PlaylistsPage/PlaylistsList/PlaylistsList.tsx'
 import { PlaylistSkeleton} from '@/features/playlists/ui/PlaylistsPage/PlaylistSkeleton.tsx'
+import { toast } from 'react-toastify'
 
 export const PlaylistsPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -18,12 +19,13 @@ export const PlaylistsPage = () => {
   const [search, setSearch] = useState('')
   const debounceSearch = useDebounceValue(search)
 
-  const { data, isLoading} = useFetchPlaylistsQuery({
+  const { data, isLoading, error} = useFetchPlaylistsQuery({
     search: debounceSearch,
     pageNumber: currentPage,
     pageSize,
   }, {refetchOnFocus: true, refetchOnReconnect: true,
     skipPollingIfUnfocused: true,})
+
 
 //refetchOnFocus: true автомотическое обновление данных именно для этого эдпоинта
   //pollingInterval: 3000- автоматически через 3000 уйдет запрос за обновлением данных
@@ -36,6 +38,20 @@ export const PlaylistsPage = () => {
   const searchPlaylistHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.currentTarget.value)
     setCurrentPage(1)
+  }
+  if (error) {
+    if ('status' in error) {
+      //проверяем есть ли свойство статус в ошибке  и это будет FetchBaseQueryError
+      //так как есть свойство статус
+      const errMsg = 'error' in error ? error.error : JSON.stringify(error)
+      toast(errMsg, { type: 'error', theme: 'colored' })
+    } else {
+      // SerializedError
+      const errMsg = error.message || 'Something went wrong'
+      toast(errMsg, { type: 'error', theme: 'colored' })
+
+    }
+    // toast(error.data.error, { type: 'error', theme: 'colored' })
   }
   if (isLoading) return <PlaylistSkeleton/>
   return (
