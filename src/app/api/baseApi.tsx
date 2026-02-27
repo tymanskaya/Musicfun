@@ -1,4 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { toast } from 'react-toastify'
+import { isErrorWithMessage } from '@/common/hooks/isErrorWithMessage.ts'
+import { isErrorWithError } from '@/common/hooks'
+
 
 export const baseApi = createApi({
   reducerPath: 'baseApi',
@@ -18,7 +22,7 @@ export const baseApi = createApi({
   baseQuery:async (args, api, extraOptions)=>{
     await new Promise(resolve => setTimeout(resolve, 2000))
     //искусственная задержка все запросы будут улетать с задержкой 2000
-    return  fetchBaseQuery({
+    const result = await fetchBaseQuery({
       baseUrl: import.meta.env.VITE_BASE_URL,
       headers: {
         'API-KEY': import.meta.env.VITE_API_KEY,
@@ -28,6 +32,40 @@ export const baseApi = createApi({
         return headers
       },
     })(args, api, extraOptions)
+    if(result.error){
+      switch (result.error.status){
+        case 'TIMEOUT_ERROR':
+          toast(result.error.error)
+          break
+        case 404:
+          if (isErrorWithError(result.error.data)) {
+            //if (isErrorWithProperty(result.error.data, error)) {-если использовать дженериковую функцию
+            //проверяем или в ошибке есть data
+            toast(result.error.data.error, { type: 'error', theme: 'colored' })
+          } else {
+            //если нет data
+            toast(JSON.stringify(result.error.data), { type: 'error', theme: 'colored' })
+          }
+          break
+        case 429:
+          // ✅ 1. Type Assertions
+          // toast((result.error.data as { message: string }).message, { type: 'error', theme: 'colored' })
+          // ✅ 2. JSON.stringify
+          // toast(JSON.stringify(result.error.data), { type: 'error', theme: 'colored' })
+          // ✅ 3. Type Predicate
+          if (isErrorWithMessage(result.error.data)) {
+            //проверяем или в ошибке есть data
+            toast(result.error.data.message, { type: 'error', theme: 'colored' })
+          } else {
+            //если нет data
+            toast(JSON.stringify(result.error.data), { type: 'error', theme: 'colored' })
+          }
+          break
+        default:
+          toast('Some error occurred', { type: 'error', theme: 'colored' })
+      }
+    }
+    return result
   },
   endpoints: () => ({}),
 })
