@@ -22,9 +22,9 @@ export const EditPlaylistForm = ({
 
   const onSubmit: SubmitHandler<UpdatePlaylistArgs> = data => {
     if (!playlistId) return
-    updatePlaylist({ playlistId, body: data }).then(() => {
+    updatePlaylist({ playlistId, body: data })
       setPlaylistId(null)
-    })
+
   }
 
   return (

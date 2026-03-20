@@ -56,6 +56,46 @@ export const playlistsApi = baseApi.injectEndpoints({
           }
         }
       }),
+      async onQueryStarted({ playlistId, body }, { dispatch, queryFulfilled, getState }) {
+        //сюда мы сразу попадем
+        //{ playlistId, body }- то что пришло в query запроса
+        //{ dispatch, queryFulfilled } - методы которые есть у onQueryStarted
+        const args = playlistsApi.util.selectCachedArgsForQuery(getState(), 'fetchPlaylists')
+        const patchResults: any[] = []
+        args.forEach(arg => {
+          patchResults.push(
+            dispatch(
+              playlistsApi.util.updateQueryData(
+                // название эндпоинта, в котором нужно обновить кэш
+                'fetchPlaylists',
+                // аргументы для эндпоинта
+                {
+                  pageNumber: arg.pageNumber,
+                  pageSize: arg.pageSize,
+                  search: arg.search,
+                },
+                state => {
+                  //здесь мы изменяем данные в кэше
+                  const index = state.data.findIndex(playlist => playlist.id === playlistId)
+                  if (index !== -1) {
+                    state.data[index].attributes = { ...state.data[index].attributes, ...body }
+                  }
+                }
+              )
+            )
+          )
+        })
+
+        try {
+          await queryFulfilled
+        }
+        catch {
+          patchResults.forEach(patchResult => {
+            patchResult.undo()
+            //если что-то пойдет не так отменится обновление в кэше до первоночального состояния
+          })
+        }
+      },
       invalidatesTags: ['Playlist'],
     }),
     deletePlaylist: build.mutation<void, string>({
