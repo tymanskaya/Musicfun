@@ -17,24 +17,41 @@ export const authApi = baseApi.injectEndpoints({
         body: { ...payload, accessTokenTTL: '3m' },
       }),
       onQueryStarted: async (_args, {dispatch, queryFulfilled})=>{
-
+        console.log('Login started...');
         try {
           //прежде чем залогиниться мы попадем сюда, сделаем запрос на сервер
           const res = await queryFulfilled
+          console.log('Data received:', res);
           //в res мы получим refreshToken, accessToken
           //теперь нум нужно refreshToken, accessToken полжить в localStorage
           localStorage.setItem(AUTH_KEYS.accessToken, res.data.accessToken)
           localStorage.setItem(AUTH_KEYS.refreshToken, res.data.refreshToken)
+          console.log('Saved to LocalStorage!');
           dispatch(authApi.util.invalidateTags(['Auth']))
         }
         catch (error) {
           // Здесь можно обработать ошибку логина, чтобы приложение не зависло
+
           console.error('Login failed:', error)
         }
 
 }
     }),
+    logout: build.mutation<void, void>({
+      query: () => {
+        const refreshToken = localStorage.getItem(AUTH_KEYS.refreshToken)
+        return { url: 'auth/logout', method: 'post', body: { refreshToken } }
+      },
+      async onQueryStarted(_args, { queryFulfilled, dispatch }) {
+        await queryFulfilled
+        //после запроса удаляем данные из localStorage
+        localStorage.removeItem(AUTH_KEYS.accessToken)
+        localStorage.removeItem(AUTH_KEYS.refreshToken)
+        dispatch(baseApi.util.resetApiState())
+        //resetApiState сбрасывает состояние всего API slice, включая кэш запросов и треки и плейлисты
+      },
+    }),
   }),
 })
 
-export const { useGetMeQuery, useLoginMutation } = authApi
+export const { useGetMeQuery, useLoginMutation, useLogoutMutation } = authApi

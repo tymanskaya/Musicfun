@@ -18,8 +18,7 @@ export const baseApi = createApi({
   refetchOnReconnect: false,
   //когда прервалось интернет-соединение, а мы что-то изменяли, данные автоматом обновятся
   baseQuery:async (args, api, extraOptions)=>{
-    // await new Promise(resolve => setTimeout(resolve, 2000))
-    //искусственная задержка все запросы будут улетать с задержкой 2000
+
     const result = await fetchBaseQuery({
       baseUrl: import.meta.env.VITE_BASE_URL,
       headers: {
