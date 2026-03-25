@@ -14,7 +14,9 @@ export const authApi = baseApi.injectEndpoints({
       query: payload => ({
         url: `auth/login`,
         method: 'post',
-        body: { ...payload, accessTokenTTL: '3m' },
+        body: { ...payload, accessTokenTTL: '10m' },
+        //accessTokenTTL: '10m' - время сколько живет accessToken, по истечению будет рефреш. будет отправлен рефрештокен,
+        //который вернет новый accessToken
       }),
       onQueryStarted: async (_args, {dispatch, queryFulfilled})=>{
 
