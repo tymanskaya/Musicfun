@@ -17,16 +17,16 @@ export const authApi = baseApi.injectEndpoints({
         body: { ...payload, accessTokenTTL: '3m' },
       }),
       onQueryStarted: async (_args, {dispatch, queryFulfilled})=>{
-        console.log('Login started...');
+
         try {
           //прежде чем залогиниться мы попадем сюда, сделаем запрос на сервер
           const res = await queryFulfilled
-          console.log('Data received:', res);
+
           //в res мы получим refreshToken, accessToken
           //теперь нум нужно refreshToken, accessToken полжить в localStorage
           localStorage.setItem(AUTH_KEYS.accessToken, res.data.accessToken)
           localStorage.setItem(AUTH_KEYS.refreshToken, res.data.refreshToken)
-          console.log('Saved to LocalStorage!');
+
           dispatch(authApi.util.invalidateTags(['Auth']))
         }
         catch (error) {
