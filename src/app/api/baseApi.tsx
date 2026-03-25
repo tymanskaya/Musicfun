@@ -1,6 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { handleErrors} from '@/common/utils'
-import { AUTH_KEYS } from '@/common/constants'
+import { createApi} from '@reduxjs/toolkit/query/react'
+import { baseQueryWithReauth } from '@/app/api/baseQueryWithReauth.ts'
 
 export const baseApi = createApi({
   reducerPath: 'baseApi',
@@ -17,25 +16,8 @@ export const baseApi = createApi({
   // где информация всегда актуальна без лишних кликов на кнопку «Обновить».
   refetchOnReconnect: false,
   //когда прервалось интернет-соединение, а мы что-то изменяли, данные автоматом обновятся
-  baseQuery:async (args, api, extraOptions)=>{
-
-    const result = await fetchBaseQuery({
-      baseUrl: import.meta.env.VITE_BASE_URL,
-      headers: {
-        'API-KEY': import.meta.env.VITE_API_KEY,
-      },
-      prepareHeaders: headers => {
-        const accessToken = localStorage.getItem(AUTH_KEYS.accessToken)
-        if (accessToken) {
-          headers.set('Authorization', `Bearer ${accessToken}`)
-        }
-        return headers
-      },
-    })(args, api, extraOptions)
-    if (result.error) {
-      handleErrors(result.error)
-    }
-    return result
-  },
+  baseQuery:baseQueryWithReauth,
   endpoints: () => ({}),
 })
+//-------------------------------
+//todo baseApi - это базовое описание редьюсеров, тегов
