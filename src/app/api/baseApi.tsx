@@ -3,7 +3,7 @@ import { baseQueryWithReauth } from '@/app/api/baseQueryWithReauth.ts'
 
 export const baseApi = createApi({
   reducerPath: 'baseApi',
-  keepUnusedDataFor: 5,
+  keepUnusedDataFor: 60,
   //управление временем удалением из кэша, можно для определенного эдпоинда делать
   tagTypes: ['Playlist', 'Auth'],
   refetchOnFocus: false,

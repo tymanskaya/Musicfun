@@ -3,7 +3,7 @@ import type { CreatePlaylistArgs } from '@/features/playlists/api/playlistsApi.t
 import { useCreatePlaylistMutation } from '@/features/playlists/api/playlistsApi.ts'
 
 type Props = {
-  setPage: (page: number) => void
+  setPage?: (page: number) => void
 }
 
 export const CreatePlaylistForm = ({setPage}: Props) => {
