@@ -1,11 +1,11 @@
-export type MeResponse = {
-  userId: string
-  login: string
-}
-export type LoginResponse = {
-  refreshToken: string
-  accessToken: string
-}
+import { LoginResponseSchema, meResponseSchema } from '@/features/auth/model/auth.schemas.ts'
+
+import * as z from "zod";
+
+export type MeResponse = z.infer<typeof meResponseSchema>
+export type LoginResponse = z.infer<typeof LoginResponseSchema>
+
+
 
 // Arguments
 export type LoginArgs = {

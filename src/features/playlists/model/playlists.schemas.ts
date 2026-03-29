@@ -19,12 +19,12 @@ export const playlistMetaSchema = z.object({
 
 export const playlistAttributesSchema = z.object({
   title: z.string(),
-  description: z.string(),
+  description: z.string().nullish(),
   addedAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
-  order: z.int(),
-  dislikesCount: z.int().nonnegative(),
-  likesCount: z.int().nonnegative(),
+  order: z.number().int(),
+  dislikesCount: z.number().int().nonnegative(),
+  likesCount: z.number().int().nonnegative(),
   tags: z.array(tagSchema),
   images: imagesSchema,
   user: userSchema,

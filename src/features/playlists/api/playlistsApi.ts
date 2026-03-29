@@ -7,7 +7,8 @@ import type {
 import { baseApi } from '@/app/api/baseApi.tsx'
 import type { Images } from '@/common/types'
 import { playlistCreateResponseSchema, playlistsResponseSchema } from '@/features/playlists/model/playlists.schemas.ts'
-import { errorToast } from '@/common/utils'
+import { errorToast, withZodCatch } from '@/common/utils'
+import { imagesSchema } from '@/common/schemas'
 
 // `createApi` - функция из `RTK Query`, позволяющая создать объект `API`
 // для взаимодействия с внешними `API` и управления состоянием приложения
@@ -27,11 +28,7 @@ export const playlistsApi = baseApi.injectEndpoints({
           params
           //передаем на сервер, чтобы оттуда вернулись треки, которые удовлетворяют введенным параметрам
         } },
-      responseSchema: playlistsResponseSchema,
-      catchSchemaFailure: err => {
-        errorToast('Zod error. Details in the console', err.issues)
-        return { status: 'CUSTOM_ERROR', error: 'Schema validation failed' }
-      },
+      ...withZodCatch(playlistsResponseSchema),
       providesTags: ['Playlist'],
     }),
     createPlaylist: build.mutation<{ data: PlaylistData }, CreatePlaylistArgs>({
@@ -46,11 +43,7 @@ export const playlistsApi = baseApi.injectEndpoints({
           }
         }
       }),
-      responseSchema: playlistCreateResponseSchema,
-      catchSchemaFailure: err => {
-        errorToast('Zod error. Details in the console', err.issues)
-        return { status: 'CUSTOM_ERROR', error: 'Schema validation failed' }
-      },
+      ...withZodCatch(playlistCreateResponseSchema),
       invalidatesTags: ['Playlist'],
     }),
 
@@ -126,6 +119,7 @@ export const playlistsApi = baseApi.injectEndpoints({
           body: formData,
         }
       },
+      ...withZodCatch(imagesSchema),
       invalidatesTags: ['Playlist'],
     }),
     deletePlaylistCover: build.mutation<void, { playlistId: string }>({
