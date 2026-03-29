@@ -17,6 +17,7 @@ export const baseApi = createApi({
   refetchOnReconnect: false,
   //когда прервалось интернет-соединение, а мы что-то изменяли, данные автоматом обновятся
   baseQuery:baseQueryWithReauth,
+  // skipSchemaValidation: process.env.NODE_ENV === 'production',
   endpoints: () => ({}),
 })
 //-------------------------------
