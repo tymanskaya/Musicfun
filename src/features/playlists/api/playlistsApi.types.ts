@@ -30,3 +30,10 @@ export type UpdatePlaylistArgs = {
   description: string
   tagIds: string[]
 }
+
+export type PlaylistCreatedEvent = {
+  type: 'tracks.playlist-created'
+  payload: {
+    data: PlaylistData
+  }
+}
